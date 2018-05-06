@@ -45,11 +45,24 @@ repdata_bydate <- repdata %>%
 
 ## What is mean total number of steps taken per day?
 
+
+```r
+hist(repdata_bydate$steps_sum, main = "Histogram of Total Steps per day", xlab = "Total Steps")
+```
+
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
 The mean of the total steps per day is 1.0766189\times 10^{4} and the median is 10765
 
 ## What is the average daily activity pattern?
+
+
+```r
+ggplot(repdata_byinterval, aes(x=interval, y=mean_steps)) + geom_line() +
+    ggtitle("Average steps per interval") + 
+    ylab("Average steps") + 
+    xlab("Interval")
+```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
@@ -78,6 +91,11 @@ repdata_imputed_bydate <- repdata_imputed %>%
 ## To map `funs` over a selection of variables, use `summarise_at()`
 ```
 
+
+```r
+hist(repdata_imputed_bydate$steps_sum, main = "Histogram of Total Steps per day (with imputed values", xlab = "Total Steps")
+```
+
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 The mean of the total steps per day, with imputed values included, is 1.0766189\times 10^{4} and the median is 1.0766189\times 10^{4}
@@ -99,6 +117,12 @@ repdata_imputed <- within(repdata_imputed, {
 ```
 
 Using this variable, I plotted graphs of steps per interval for Weekend vs. Weekday
+
+
+```r
+library(lattice)
+xyplot(steps~interval|weored, data = repdata_imputed, type='l', layout=c(1,2))
+```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 

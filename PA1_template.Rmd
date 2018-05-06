@@ -29,7 +29,7 @@ repdata_bydate <- repdata %>%
 
 ## What is mean total number of steps taken per day?
 
-```{r, echo=FALSE}
+```{r}
 hist(repdata_bydate$steps_sum, main = "Histogram of Total Steps per day", xlab = "Total Steps")
 ```
 
@@ -37,7 +37,7 @@ The mean of the total steps per day is `r mean(repdata_bydate$steps_sum, na.rm =
 
 ## What is the average daily activity pattern?
 
-```{r, echo=FALSE}
+```{r}
 ggplot(repdata_byinterval, aes(x=interval, y=mean_steps)) + geom_line() +
     ggtitle("Average steps per interval") + 
     ylab("Average steps") + 
@@ -62,7 +62,7 @@ repdata_imputed_bydate <- repdata_imputed %>%
   summarise_each(funs(sum, mean, median), steps)
 ```
 
-```{r, echo=FALSE}
+```{r}
 hist(repdata_imputed_bydate$steps_sum, main = "Histogram of Total Steps per day (with imputed values", xlab = "Total Steps")
 ```
 
@@ -85,7 +85,7 @@ repdata_imputed <- within(repdata_imputed, {
 
 Using this variable, I plotted graphs of steps per interval for Weekend vs. Weekday
 
-```{r, echo=FALSE}
+```{r}
 library(lattice)
 xyplot(steps~interval|weored, data = repdata_imputed, type='l', layout=c(1,2))
 ```
