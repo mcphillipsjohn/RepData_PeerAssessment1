@@ -9,10 +9,18 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r}
+
+```r
 suppressMessages(library(plyr))
 suppressMessages(library(dplyr))
 suppressMessages(library(knitr))
+```
+
+```
+## Warning: package 'knitr' was built under R version 3.4.4
+```
+
+```r
 suppressMessages(library(ggplot2))
 setwd("C:/Users/john.mcphillips/Google Drive/Coursera/Reproducible Research/Course Project 1")
 
@@ -23,37 +31,39 @@ repdata$date <- as.Date(repdata$date, format = "%Y-%m-%d")
 repdata_bydate <- repdata %>%
   group_by(date) %>% 
   summarise_each(funs(sum, mean, median), steps)
+```
 
+```
+## `summarise_each()` is deprecated.
+## Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.
+## To map `funs` over a selection of variables, use `summarise_at()`
+```
+
+```r
  repdata_byinterval <- repdata %>% group_by(interval) %>% summarise(mean_steps = mean(steps, na.rm = TRUE))
 ```
 
 ## What is mean total number of steps taken per day?
 
-```{r, echo=FALSE}
-hist(repdata_bydate$steps_sum, main = "Histogram of Total Steps per day", xlab = "Total Steps")
-```
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
-The mean of the total steps per day is `r mean(repdata_bydate$steps_sum, na.rm = TRUE)` and the median is `r median(repdata_bydate$steps_sum, na.rm = TRUE)`
+The mean of the total steps per day is 1.0766189\times 10^{4} and the median is 10765
 
 ## What is the average daily activity pattern?
 
-```{r, echo=FALSE}
-ggplot(repdata_byinterval, aes(x=interval, y=mean_steps)) + geom_line() +
-    ggtitle("Average steps per interval") + 
-    ylab("Average steps") + 
-    xlab("Interval")
-```
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 The 5 minute interval on average that contains the maximum number of steps 
-is `r repdata_byinterval$interval[which.max(repdata_byinterval$mean_steps)]`
+is 835
 
 ## Imputing missing values
 
-There are `r sum(is.na(repdata$steps))` rows out of `nrow(repdata)` that have missing values.
+There are 2304 rows out of `nrow(repdata)` that have missing values.
 
 Impute the missing values by taking the mean number of steps for that interval across all days
 
-``` {r}
+
+```r
 impute.mean <- function(x) replace(x, is.na(x), mean(x, na.rm = TRUE))
 repdata_imputed <- ddply(repdata, ~ interval, transform, steps = impute.mean(steps))
 
@@ -62,18 +72,23 @@ repdata_imputed_bydate <- repdata_imputed %>%
   summarise_each(funs(sum, mean, median), steps)
 ```
 
-```{r, echo=FALSE}
-hist(repdata_imputed_bydate$steps_sum, main = "Histogram of Total Steps per day (with imputed values", xlab = "Total Steps")
+```
+## `summarise_each()` is deprecated.
+## Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.
+## To map `funs` over a selection of variables, use `summarise_at()`
 ```
 
-The mean of the total steps per day, with imputed values included, is `r mean(repdata_imputed_bydate$steps_sum, na.rm = TRUE)` and the median is `r median(repdata_imputed_bydate$steps_sum, na.rm = TRUE)`
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+The mean of the total steps per day, with imputed values included, is 1.0766189\times 10^{4} and the median is 1.0766189\times 10^{4}
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 Using the imputed values data set, I added a factor variable indicating whether the day was a weekday or weekend.
 
-```{r}
+
+```r
 repdata_imputed$weekday <- weekdays(repdata_imputed$date)
 
 weekends <- c("Saturday", "Sunday")
@@ -85,10 +100,7 @@ repdata_imputed <- within(repdata_imputed, {
 
 Using this variable, I plotted graphs of steps per interval for Weekend vs. Weekday
 
-```{r, echo=FALSE}
-library(lattice)
-xyplot(steps~interval|weored, data = repdata_imputed, type='l', layout=c(1,2))
-```
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 From this plot, we can see that on Weekdays, there tends to be more activity during the morning intervals (500 to 1000), whereas at the Weekend, activity only begins around interval 800, does not have as much activity but continues later in to the day than on a weekday. This perhaps indicates that this person has a weekday job, which requires 
 a lot of walking, and recovers at the weekend by sleeping longer in the morning.
